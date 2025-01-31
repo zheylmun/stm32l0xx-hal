@@ -243,7 +243,7 @@ impl Rcc {
             w.lseon().set_bit()
         });
         while self.rb.csr.read().lserdy().bit_is_clear() {}
-        LSE(())
+        LSE
     }
 
     /// Enable the Low Speed Internal (LSI) clock.
@@ -253,7 +253,7 @@ impl Rcc {
             w.lsion().set_bit()
         });
         while self.rb.csr.read().lsirdy().bit_is_clear() {}
-        LSI(())
+        LSI
     }
 }
 
@@ -286,7 +286,7 @@ impl Rcc {
         self.rb.crrcr.modify(|_, w| w.hsi48on().set_bit());
         while self.rb.crrcr.read().hsi48rdy().bit_is_clear() {}
 
-        HSI48(())
+        HSI48
     }
 }
 
@@ -308,7 +308,7 @@ impl Rcc {
             w.mcopre().variant(prescaler)
         });
 
-        MCOEnabled(())
+        MCOEnabled
     }
 }
 
@@ -531,24 +531,29 @@ impl Clocks {
 ///
 /// You can get an instance of this struct by calling [`Rcc::enable_hsi48`].
 #[derive(Clone, Copy)]
-pub struct HSI48(());
+#[non_exhaustive]
+pub struct HSI48;
 
 /// Token that exists only if MCO (Microcontroller Clock Out) has been enabled.
 ///
 /// You can get an instance of this struct by calling [`Rcc::configure_mco`].
 #[derive(Clone, Copy)]
-pub struct MCOEnabled(());
+#[non_exhaustive]
+pub struct MCOEnabled;
 
 /// A token that exists only if the LSE clock has been enabled
 ///
 /// The token is returned by calling [`Rcc::enable_lse`].
 #[derive(Clone, Copy)]
-pub struct LSE(());
+#[non_exhaustive]
+pub struct LSE;
 
 /// A token that exists only if the LSI clock has been enabled
 ///
 /// The token is returned by calling [`Rcc::enable_lsi`].
-pub struct LSI(());
+#[derive(Clone, Copy)]
+#[non_exhaustive]
+pub struct LSI;
 
 /// Bus associated to peripheral
 pub trait RccBus: crate::Sealed {
