@@ -12,16 +12,24 @@ mod enable;
 /// System clock mux source
 #[derive(Clone, Copy)]
 pub enum ClockSrc {
+    /// Select the MSI (Multispeed Internal) oscillator
+    /// with the given range as the system clock source
     MSI(MSIRange),
+    /// Select the PLL (Phase Locked Loop) with the given source,
+    /// multiplier, and divider as the system clock source
     PLL(PLLSource, PLLMul, PLLDiv),
+    /// Select the HSE (High Speed External) oscillator
+    /// as the system clock source
     HSE(Hertz),
+    /// Select the HSI16 (High Speed Internal 16MHz) oscillator
+    /// with the given divider as the system clock source
     HSI16(HSI16Div),
 }
 
 /// MSI Clock Range
 ///
-/// These ranges control the frequency of the MSI. Internally, these ranges map
-/// to the `MSIRANGE` bits in the `RCC_ICSCR` register.
+/// These ranges control the frequency of the MSI (Multispeed Internal) oscillator.
+/// Internally, these ranges map to the `MSIRANGE` bits in the `RCC_ICSCR` register.
 #[derive(Clone, Copy, Default)]
 pub enum MSIRange {
     /// Around 65.536 kHz
@@ -41,7 +49,7 @@ pub enum MSIRange {
     Range6 = 6,
 }
 
-/// HSI16 divider
+/// HSI16 (High Speed Internal 16MHz) divider
 #[derive(Clone, Copy)]
 pub enum HSI16Div {
     Div1 = 1,
@@ -70,7 +78,7 @@ pub enum PLLMul {
     Mul48 = 8,
 }
 
-/// AHB prescaler
+/// AHB (Advanced High-performance Bus) prescaler
 #[derive(Clone, Copy)]
 pub enum AHBPrescaler {
     NotDivided = 0,
@@ -97,18 +105,25 @@ pub enum APBPrescaler {
 /// PLL clock input source
 #[derive(Clone, Copy)]
 pub enum PLLSource {
+    /// Select the HSI (High Speed Internal 16MHz) oscillator
+    /// with the given divider as the PLL input clock
     HSI16(HSI16Div),
+    /// Select the HSE (High Speed External) oscillator as the PLL input clock
     HSE(Hertz),
 }
 
 /// HSI speed
 pub const HSI_FREQ: u32 = 16_000_000;
 
-/// Clocks configutation
+/// Clocks configuration
 pub struct Config {
+    /// System Clock Source
     mux: ClockSrc,
+    /// Advanced High-performance Bus (AHB) prescaler
     ahb_pre: AHBPrescaler,
+    /// Advanced Peripheral Bus 1 (APB1) prescaler
     apb1_pre: APBPrescaler,
+    /// Advanced Peripheral Bus 2 (APB2) prescaler
     apb2_pre: APBPrescaler,
 }
 
@@ -193,12 +208,13 @@ impl Config {
     }
 }
 
-/// RCC peripheral
+/// Reset and Clock Control (RCC) peripheral
 pub struct Rcc {
     pub clocks: Clocks,
     pub(crate) rb: RCC,
 }
 
+/// Deref to RCC register block
 impl core::ops::Deref for Rcc {
     type Target = RCC;
 
